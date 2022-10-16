@@ -29,24 +29,24 @@ public class ConsultForm {
     @FindBy(id = "input-comment-consultation")
     WebElement comment;
 
-    @FindBy(xpath = "//span[@class=\"checkbox_checkmark\"]")
-    WebElement agree;
-
     public ConsultForm(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 
     public void clickMessenger(String messengers) {
         for (WebElement l : messenger) {
-            if (l.getAttribute("data-name").equals("tg")) {
+            if (l.getAttribute("data-name").equals(messengers)) {
                 l.click();
+                break;
             }
         }
     }
     public void selectCourse(String s) {
+        courses.click();
         for (WebElement l:listOfCourses) {
             if(l.getText().equals(s)){
                 l.click();
+                break;
             }
         }
     }

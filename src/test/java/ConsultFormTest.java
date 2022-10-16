@@ -1,3 +1,4 @@
+import Data.DataProv;
 import DriverConfig.BROWSER;
 import DriverConfig.BaseClass;
 import DriverConfig.DriverFactory;
@@ -10,20 +11,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.openqa.selenium.WebDriver;
 
-
-import java.util.ResourceBundle;
-
-@RunWith(Parameterized.class)
 public class ConsultFormTest extends BaseClass {
     WebDriver driver;
     ConsultForm form;
     HillelMainPage hillelMainPage;
 
-    String NAME;
 
-
-
-    @Before
+    @BeforeClass
     public void crate() {
         if (driver == null) {
             driver = DriverFactory.getDriver(BROWSER.CHROME);
@@ -36,19 +30,18 @@ public class ConsultFormTest extends BaseClass {
         }
     }
 
-    @After
-    public void Thread() throws InterruptedException {
-        Thread.sleep(5000);
+    @AfterClass
+    public void after() {
         driver.close();
     }
 
-    @Test()
-    public void OpenSite() {
+    @Test(description = "Open main page hillel", priority = 0)
+    public void openSite() {
         driver.get("https://dnipro.ithillel.ua/");
         Assert.assertEquals(driver.getTitle(), "Комп'ютерна школа Hillel у Дніпрі: Курси IT-технологій");
     }
 
-    @Test
+    @Test(description = "Click on button", dependsOnMethods = "openSite", priority = 1)
     public void CheckAndClickConsultButton() {
         if (HillelMainPage.element.isEnabled()) {
             hillelMainPage.clickConsultButton();
@@ -57,11 +50,11 @@ public class ConsultFormTest extends BaseClass {
         }
     }
 
-    @Test
-    public void testForm() {
+    @Test(dataProvider = "dataFormConsult", dataProviderClass = DataProv.class, priority = 2)
+    public void testForm(String name, String email, String tel, String messenger, String courses) throws InterruptedException {
+        driver.get("https://dnipro.ithillel.ua/");
         hillelMainPage.clickConsultButton();
-        ResourceBundle bundle = ResourceBundle.getBundle(NAME);
-        form.create(bundle.getString("name"), bundle.getString("email"), bundle.getString("tel"),
-                bundle.getString("messenger"), bundle.getString("courses"), "Hello");
+        form.create(name, email, tel, messenger, courses, "Hello");
+        Thread.sleep(3000);
     }
 }
